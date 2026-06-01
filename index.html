@@ -43,13 +43,11 @@
 
       h1 {
         color: #ff4081;
-        margin-bottom: 10px;
         font-size: 3rem;
       }
 
       p {
         color: #666;
-        margin-bottom: 30px;
         font-size: 1.4rem;
       }
 
@@ -72,7 +70,9 @@
       #yes {
         background: #4caf50;
         color: white;
-        transition: transform 0.15s ease;
+        transition:
+          transform 0.15s ease,
+          opacity 0.3s ease;
       }
 
       #no {
@@ -101,23 +101,28 @@
         }
       }
 
-      /* 🎊 confetti */
-      .confetti {
+      /* 💥 explosion particles */
+      .particle {
         position: fixed;
-        width: 10px;
-        height: 10px;
-        top: -20px;
-        animation: fall 3s linear forwards;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        z-index: 9999;
+        animation: explode 0.8s ease-out forwards;
       }
 
-      @keyframes fall {
-        to {
-          transform: translateY(110vh) rotate(720deg);
+      @keyframes explode {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(var(--x), var(--y)) scale(0);
           opacity: 0;
         }
       }
 
-      /* 💍 LOADING */
+      /* 💍 loading */
       .loading {
         position: fixed;
         inset: 0;
@@ -130,7 +135,7 @@
         z-index: 999;
       }
 
-      /* second page */
+      /* final */
       .final-screen {
         height: 100vh;
         width: 100%;
@@ -143,10 +148,23 @@
         animation: bgMove 8s infinite;
       }
 
-      .final-screen h1 {
-        font-size: 3rem;
-        color: #ff4081;
-        animation: pulse 1.5s infinite;
+      .typing {
+        font-size: 2rem;
+        color: white;
+        border-right: 3px solid white;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 0;
+        animation: typing 3s steps(40) forwards;
+      }
+
+      @keyframes typing {
+        from {
+          width: 0;
+        }
+        to {
+          width: 100%;
+        }
       }
 
       @keyframes pulse {
@@ -160,31 +178,12 @@
           transform: scale(1);
         }
       }
-
-      .typing {
-        font-size: 2rem;
-        color: white;
-        white-space: nowrap;
-        overflow: hidden;
-        border-right: 3px solid white;
-        width: 0;
-        animation: typing 3s steps(40) forwards;
-      }
-
-      @keyframes typing {
-        from {
-          width: 0;
-        }
-        to {
-          width: 100%;
-        }
-      }
     </style>
   </head>
 
   <body>
     <div class="container">
-      <!-- ❗ YOUR ORIGINAL TEXT (UNCHANGED) -->
+      <!-- 🔒 ORIGINAL TEXT RETAINED -->
       <h1>Confirm mo nga... asawa mo na ako, diba? 😌❤️</h1>
       <p>Answer carefully. One of the buttons may not cooperate. 🤭</p>
 
@@ -204,8 +203,8 @@
       let yesScale = 1;
 
       function moveButton() {
-        const maxX = window.innerWidth - noBtn.offsetWidth - 20;
-        const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+        const maxX = window.innerWidth - noBtn.offsetWidth;
+        const maxY = window.innerHeight - noBtn.offsetHeight;
 
         noBtn.style.position = 'fixed';
         noBtn.style.left = Math.random() * maxX + 'px';
@@ -233,56 +232,86 @@
 
       setInterval(createHeart, 500);
 
-      function launchConfetti() {
-        for (let i = 0; i < 120; i++) {
-          const c = document.createElement('div');
-          c.classList.add('confetti');
-          c.style.left = Math.random() * window.innerWidth + 'px';
-          c.style.background = ['#ff4081', '#ffeb3b', '#4caf50', '#2196f3'][Math.floor(Math.random() * 4)];
-          c.style.animationDuration = Math.random() * 2 + 2 + 's';
-          document.body.appendChild(c);
-          setTimeout(() => c.remove(), 4000);
+      /* 💥 EXPLOSION */
+      function explode(btn) {
+        const rect = btn.getBoundingClientRect();
+        const colors = ['#ff4081', '#ffeb3b', '#4caf50', '#2196f3', '#ff9800'];
+
+        for (let i = 0; i < 25; i++) {
+          const p = document.createElement('div');
+          p.classList.add('particle');
+
+          const angle = Math.random() * 2 * Math.PI;
+          const distance = Math.random() * 120;
+
+          p.style.left = rect.left + rect.width / 2 + 'px';
+          p.style.top = rect.top + rect.height / 2 + 'px';
+          p.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+          p.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+          p.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+
+          document.body.appendChild(p);
+          setTimeout(() => p.remove(), 800);
         }
       }
 
+      /* 🔊 sound */
       function playSound() {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const o = ctx.createOscillator();
         const g = ctx.createGain();
 
-        o.type = 'triangle';
-        o.frequency.value = 600;
-        g.gain.value = 0.2;
+        o.type = 'sine';
+        o.frequency.value = 700;
+        g.gain.value = 0.15;
 
         o.connect(g);
         g.connect(ctx.destination);
 
         o.start();
-        o.stop(ctx.currentTime + 0.2);
+        o.stop(ctx.currentTime + 0.15);
       }
 
-      function showFinalScreen() {
+      function showFinal() {
         document.body.innerHTML = `
           <div class="final-screen">
-            <h1>❤️ YAY! ❤️</h1>
-            <div class="typing">I Love You, Asawa ko 🥰</div>
-            <h2 style="color:white;">Jeff & Tonie</h2>
-            <p style="color:white;">Sa ayaw at sa gusto mo. Officially walang bawian 💍✨</p>
-            <p style="color:white;">
-Screenshot taken as evidence for future reference 📸😂</p>
+            <h1 style="animation:pulse 1.5s infinite;">❤️ YAY! ❤️</h1>
+            <div class="typing"></div>
+            <div class="typing">Jeff & Tonie</div>
+            <h2 style="color:white;">I Love You, Asawa ko 🥰</h2>
+            <p style="color:white;">Sa ayaw at sa gusto mo. Officially walang bawian. 💍✨</p>
+            <p style="color:white;">Screenshot taken as evidence for future reference 📸😂</p>
           </div>
         `;
       }
 
-      yesBtn.addEventListener('click', () => {
-        playSound();
-        launchConfetti();
-
+      function loadingSequence() {
         loading.style.display = 'flex';
 
+        let texts = [
+          '💍 Preparing marriage contract...',
+          '❤️ Checking compatibility...',
+          '💖 Loading forever mode...',
+          '😂 No escape detected...'
+        ];
+
+        let i = 0;
+        const interval = setInterval(() => {
+          loading.innerHTML = texts[i];
+          i++;
+          if (i >= texts.length) clearInterval(interval);
+        }, 1200);
+
         setTimeout(() => {
-          showFinalScreen();
-        }, 2200);
+          showFinal();
+        }, 7000);
+      }
+
+      yesBtn.addEventListener('click', () => {
+        playSound();
+        explode(yesBtn);
+        loadingSequence();
       });
     </script>
   </body>
