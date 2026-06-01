@@ -31,25 +31,27 @@
       h1 {
         color: #ff4081;
         margin-bottom: 10px;
+        font-size: 3rem;
       }
 
       p {
         color: #666;
         margin-bottom: 30px;
+        font-size: 1.4rem;
       }
 
       .buttons {
         position: relative;
-        width: 400px;
-        height: 200px;
+        width: 600px;
+        height: 300px;
         margin: 0 auto;
       }
 
       button {
-        padding: 15px 30px;
-        font-size: 18px;
+        padding: 20px 40px;
+        font-size: 26px;
         border: none;
-        border-radius: 12px;
+        border-radius: 14px;
         cursor: pointer;
         font-weight: bold;
       }
@@ -57,7 +59,7 @@
       #yes {
         background: #4caf50;
         color: white;
-        transition: transform 0.2s ease;
+        transition: transform 0.15s ease;
       }
 
       #no {
@@ -69,11 +71,11 @@
         transition: all 0.2s ease;
       }
 
-      /* HEARTS */
+      /* ❤️ HEARTS */
       .heart {
         position: fixed;
         bottom: -80px;
-        font-size: 50px;
+        font-size: 60px;
         animation: floatUp linear infinite;
         opacity: 0.7;
         pointer-events: none;
@@ -90,7 +92,7 @@
         }
       }
 
-      /* CONFETTI */
+      /* 🎊 CONFETTI */
       .confetti {
         position: fixed;
         width: 10px;
@@ -107,15 +109,24 @@
         }
       }
 
+      /* 📱 MOBILE */
       @media (max-width: 500px) {
-        .buttons {
-          width: 100%;
-          height: 250px;
+        h1 {
+          font-size: 2.2rem;
+        }
+
+        p {
+          font-size: 1.2rem;
         }
 
         button {
-          font-size: 16px;
-          padding: 12px 20px;
+          font-size: 20px;
+          padding: 16px 28px;
+        }
+
+        .buttons {
+          width: 100%;
+          height: 280px;
         }
       }
     </style>
@@ -146,7 +157,8 @@
         noBtn.style.left = Math.random() * maxX + 'px';
         noBtn.style.top = Math.random() * maxY + 'px';
 
-        yesScale += 0.35;
+        // 💥 YES BUTTON GROWS FASTER
+        yesScale += 0.3;
         yesBtn.style.transform = `scale(${yesScale})`;
       }
 
@@ -157,14 +169,14 @@
         moveButton();
       });
 
-      /* FLOATING HEARTS */
+      /* ❤️ FLOATING HEARTS */
       function createHeart() {
         const heart = document.createElement('div');
         heart.classList.add('heart');
         heart.innerHTML = '❤️';
 
         heart.style.left = Math.random() * 100 + 'vw';
-        heart.style.fontSize = Math.random() * 60 + 40 + 'px';
+        heart.style.fontSize = Math.random() * 80 + 40 + 'px';
         heart.style.animationDuration = Math.random() * 4 + 4 + 's';
 
         document.body.appendChild(heart);
@@ -172,9 +184,9 @@
         setTimeout(() => heart.remove(), 9000);
       }
 
-      setInterval(createHeart, 600);
+      setInterval(createHeart, 500);
 
-      /* CONFETTI */
+      /* 🎊 CONFETTI */
       function launchConfetti() {
         const colors = ['#ff4081', '#ffeb3b', '#4caf50', '#2196f3', '#ff9800', '#9c27b0'];
 
@@ -201,28 +213,28 @@
 
         setTimeout(() => {
           document.body.innerHTML = `
-          <div style="
-            height:100vh;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            flex-direction:column;
-            background:#ffe4ec;
-            font-family:Arial,sans-serif;
-            text-align:center;
-            padding:20px;
-          ">
-            <h1 style="color:#ff4081;font-size:3rem;">❤️ YAY! ❤️</h1>
-            <h2>I Love You, Asawa ko 🥰</h2>
-            <h2> Jeff & Tonie</h2>
-            <p style="font-size:1.2rem;">
-              Sa ayaw at sa gusto mo. Officially walang bawian 💍✨
-            </p>
-            <p>
-              Screenshot taken as evidence for future reference. 📸😂
-            </p>
-          </div>
-        `;
+            <div style="
+              height:100vh;
+              display:flex;
+              justify-content:center;
+              align-items:center;
+              flex-direction:column;
+              background:#ffe4ec;
+              font-family:Arial,sans-serif;
+              text-align:center;
+              padding:20px;
+            ">
+              <h1 style="color:#ff4081;font-size:3rem;">❤️ YAY! ❤️</h1>
+              <h2>I Love You, Asawa ko 🥰</h2>
+              <h2> Jeff & Tonie</h2>
+              <p style="font-size:1.2rem;">
+                Sa ayaw at sa gusto mo. Officially walang bawian 💍✨
+              </p>
+              <p>
+                Screenshot taken as evidence for future reference. 📸😂
+              </p>
+            </div>
+          `;
         }, 1200);
       });
     </script>
