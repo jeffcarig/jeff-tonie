@@ -162,6 +162,54 @@
           width: 100%;
         }
       }
+
+      /* 📱 MOBILE FIX */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1.8rem;
+          padding: 0 10px;
+        }
+
+        p {
+          font-size: 1rem;
+          padding: 0 10px;
+        }
+
+        .buttons {
+          width: 100%;
+          height: 250px;
+        }
+
+        button {
+          font-size: 18px;
+          padding: 14px 20px;
+        }
+
+        #yes,
+        #no {
+          position: relative;
+          left: auto;
+          top: auto;
+          display: block;
+          margin: 10px auto;
+          transform: none !important;
+        }
+
+        #no {
+          position: fixed;
+        }
+      }
+
+      @media (max-width: 400px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        button {
+          font-size: 16px;
+          padding: 12px 18px;
+        }
+      }
     </style>
   </head>
 
@@ -185,70 +233,6 @@
 
       let yesScale = 1;
 
-      /* 🎻 AUDIO SYSTEM */
-      let ctx;
-      let oscillators = [];
-
-      let finalCtx;
-      let finalTone;
-
-      /* 🎻 WEDDING MARCH (soft progression inspired) */
-      function startWeddingMarch() {
-        ctx = new (window.AudioContext || window.webkitAudioContext)();
-
-        const gain = ctx.createGain();
-        gain.gain.value = 0.05;
-        gain.connect(ctx.destination);
-
-        const progressions = [
-          [523, 659, 784], // C
-          [494, 622, 740], // B
-          [440, 554, 659], // A minor feel
-          [523, 659, 784] // resolve
-        ];
-
-        let i = 0;
-
-        function playChord() {
-          if (i >= progressions.length) return;
-
-          const chord = progressions[i];
-
-          chord.forEach((freq) => {
-            const osc = ctx.createOscillator();
-            osc.type = 'sine';
-            osc.frequency.value = freq;
-
-            osc.connect(gain);
-            osc.start();
-
-            oscillators.push(osc);
-          });
-
-          i++;
-          setTimeout(playChord, 1800);
-        }
-
-        playChord();
-      }
-
-      /* 💍 FINAL STEADY TONE */
-      function startFinalTone() {
-        finalCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        const gain = finalCtx.createGain();
-        gain.gain.value = 0.03;
-        gain.connect(finalCtx.destination);
-
-        finalTone = finalCtx.createOscillator();
-        finalTone.type = 'sine';
-        finalTone.frequency.value = 220;
-
-        finalTone.connect(gain);
-        finalTone.start();
-      }
-
-      /* BUTTON MOVE */
       function moveButton() {
         const maxX = window.innerWidth - noBtn.offsetWidth;
         const maxY = window.innerHeight - noBtn.offsetHeight;
@@ -262,12 +246,29 @@
       }
 
       noBtn.addEventListener('mouseenter', moveButton);
+
       noBtn.addEventListener('touchstart', (e) => {
         e.preventDefault();
         moveButton();
       });
 
-      /* HEARTS */
+      noBtn.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+
+        const maxX = window.innerWidth - noBtn.offsetWidth;
+        const maxY = window.innerHeight - noBtn.offsetHeight;
+
+        let x = touch.clientX;
+        let y = touch.clientY;
+
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = Math.min(Math.max(x + 40, 0), maxX) + 'px';
+        noBtn.style.top = Math.min(Math.max(y + 40, 0), maxY) + 'px';
+
+        yesScale += 0.2;
+        yesBtn.style.transform = `scale(${yesScale})`;
+      });
+
       function createHeart() {
         const heart = document.createElement('div');
         heart.classList.add('heart');
@@ -280,7 +281,6 @@
 
       setInterval(createHeart, 500);
 
-      /* EXPLOSION */
       function explode(btn) {
         const rect = btn.getBoundingClientRect();
         const colors = ['#ff4081', '#ffeb3b', '#4caf50', '#2196f3', '#ff9800'];
@@ -304,7 +304,6 @@
         }
       }
 
-      /* CLICK SOUND */
       function playSound() {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const o = ctx.createOscillator();
@@ -322,17 +321,9 @@
       }
 
       function showFinal() {
-        if (oscillators.length) {
-          oscillators.forEach((o) => o.stop());
-        }
-
-        if (finalTone) finalTone.stop();
-
-        // startFinalTone();
-
         document.body.innerHTML = `
           <div class="final-screen">
-            <h1 style="animation:pulse 1.5s infinite;">❤️ YAY! ❤️</h1>
+            <h1>❤️ YAY! ❤️</h1>
             <div class="typing"></div>
             <div class="typing">Jeff & Tonie</div>
             <h2 style="color:white;">I Love You, Asawa ko 🥰</h2>
@@ -365,8 +356,7 @@
       }
 
       yesBtn.addEventListener('click', () => {
-        // startWeddingMarch(); // 🎻 NEW SOUND
-        // playSound();
+        playSound();
         explode(yesBtn);
         loadingSequence();
       });
